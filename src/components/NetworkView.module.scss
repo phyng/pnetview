@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+}
+
+.leftToolbox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background-color: #FFF;
+  border: 1px solid #DDD;
+  padding: 10px;
+}
+
+.rightToolbox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  background-color: #FFF;
+  border: 1px solid #DDD;
+  padding: 10px;
+}
