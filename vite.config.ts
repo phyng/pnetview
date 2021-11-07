@@ -1,12 +1,12 @@
-
 import { defineConfig } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import vitePluginImp from 'vite-plugin-imp'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/pnetview/',
   server: {
-    port: 3000
+    port: 3000,
   },
   plugins: [
     reactRefresh() as undefined,
@@ -14,16 +14,16 @@ export default defineConfig({
       libList: [
         {
           libName: 'antd',
-          style: (name) => `antd/es/${name}/style`
-        }
-      ]
+          style: (name) => `antd/es/${name}/style`,
+        },
+      ],
     })
   ],
   css: {
     preprocessorOptions: {
       less: {
-        javascriptEnabled: true
-      }
-    }
-  }
+        javascriptEnabled: true,
+      },
+    },
+  },
 })
