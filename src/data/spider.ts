@@ -24,7 +24,7 @@ const getPage = async (pageNumber: number) => {
 
 const run = async () => {
   const languanges: string[][] = []
-  for (const pageNumber of Array.from({ length: 10 }, (_, i) => i + 1)) {
+  for (const pageNumber of Array.from({ length: 50 }, (_, i) => i + 1)) {
     const results = await getPage(pageNumber)
     languanges.push(...results.map(r => r.languanges))
   }

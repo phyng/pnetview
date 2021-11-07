@@ -50,7 +50,7 @@ const convertFormatStringArrayToNetwork = (data: DataFormatStringArray, limit = 
         id: name,
         style: {
           keyshape: {
-            size: size < 10 ? 10 : size,
+            size: size < 5 ? 5 : size,
           },
           label: {
             value: name,
