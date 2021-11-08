@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node1"
+        }
+      }
+    },
+    {
+      "id": "node2",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node2"
+        }
+      }
+    },
+    {
+      "id": "node3",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node3"
+        }
+      }
+    },
+    {
+      "id": "node5",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node5"
+        }
+      }
+    },
+    {
+      "id": "node6",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node6"
+        }
+      }
+    },
+    {
+      "id": "node7",
+      "style": {
+        "keyshape": {
+          "size": 50
+        },
+        "label": {
+          "value": "node7"
+        }
+      }
+    },
+    {
+      "id": "node4",
+      "style": {
+        "keyshape": {
+          "size": 25
+        },
+        "label": {
+          "value": "node4"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node1",
+      "target": "node2",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    },
+    {
+      "source": "node2",
+      "target": "node3",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    },
+    {
+      "source": "node3",
+      "target": "node5",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    },
+    {
+      "source": "node5",
+      "target": "node6",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    },
+    {
+      "source": "node5",
+      "target": "node4",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    },
+    {
+      "source": "node6",
+      "target": "node7",
+      "value": 1,
+      "style": {
+        "keyshape": {
+          "lineWidth": 10
+        }
+      }
+    }
+  ]
+}

@@ -28,6 +28,16 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
     onNetworkChange && onNetworkChange(fileItem.network)
   }
 
+  const handleDownload = () => {
+    const text = JSON.stringify(network, null, 2)
+    const a = window.document.createElement('a')
+    a.href = window.URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
+    a.download = `${network.name.split('.')[0]}.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
   const handleUpload = async (file: File) => {
     const fileItem: FileItem = {
       file: file,
@@ -42,7 +52,14 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
     <section>
       <section className="mb-2">
         {/* <div className="font-bold mb-1">summary</div> */}
-        <div>name: {network.name}</div>
+        <div>
+          name: {network.name}
+          &nbsp;&nbsp;
+          <span className="text-gray-400 cursor-pointer" title="click to download network" onClick={e => {
+            e.stopPropagation()
+            handleDownload()
+          }}>Download</span>
+        </div>
         <div>nodes: {network.nodes.length}</div>
         <div>lnks: {network.edges.length}</div>
       </section>
@@ -85,7 +102,7 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
                   title="click to select file"
                   onClick={() => selectFileItem(file)}
                 >
-                  <span className={file === currentFileItem ? '' : 'text-gray-500'}>
+                  <span className={file === currentFileItem ? 'font-bold' : 'text-gray-500'}>
                     {file.name}
                     {file.network && <span>(nodes:{file.network.nodes.length} edges:{file.network.edges.length})</span>}
                     {!file.network && <span>(no network)</span>}
@@ -93,7 +110,7 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
                     <span className="text-gray-400" title="click to remove file" onClick={e => {
                       e.stopPropagation()
                       setFileItems(files => files.filter(f => f !== file))
-                    }}>remove</span>
+                    }}>Remove</span>
                   </span>
                 </div>
               ))}
