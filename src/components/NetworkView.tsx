@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Graphin, { Utils } from '@antv/graphin'
 import { useWindowSize } from 'react-use'
 import styles from './NetworkView.module.scss'
-import { getDemoData } from '../data/importer'
+import { getDemoData } from '../services/network'
+import DataPanel from './DataPanel'
 
 interface Props {
   value?: string
@@ -12,27 +13,31 @@ interface Props {
 const NetworkView: React.FC<Props> = () => {
   const { width, height } = useWindowSize()
   const [layoutType, setLayoutType] = useState('force')
-  const network = getDemoData('wakatime-leaders')
+  const [network, setNetwork] = useState(getDemoData('wakatime-leaders'))
   console.log('network', network)
 
-  const nodes = network.nodes
-  const edges = Utils.processEdges(network.edges, {
-    poly: 50,
-    loop: 100,
-  })
-  const data = { nodes, edges }
-
-  edges.forEach((edge) => {
-    edge.style = edge.style || {}
-    if (typeof edge.style === 'object') {
-      edge.style.label = {
-        value: '' // edge.value,
+  const graphinData = useMemo(() => {
+    const nodes = network.nodes
+    const edges = Utils.processEdges(network.edges, {
+      poly: 50,
+      loop: 100,
+    })
+    edges.forEach((edge) => {
+      edge.style = edge.style || {}
+      if (typeof edge.style === 'object') {
+        edge.style.label = {
+          value: '', // edge.value,
+        }
+        edge.style.keyshape = edge.style.keyshape || {}
+        edge.style.keyshape.stroke = '#ccc'
+        edge.style.keyshape.opacity = 0.5
       }
-      edge.style.keyshape = edge.style.keyshape || {}
-      edge.style.keyshape.stroke = '#ccc'
-      edge.style.keyshape.opacity = 0.5
+    })
+    return {
+      nodes,
+      edges,
     }
-  })
+  }, [network])
 
   const choices = [
     'graphin-force',
@@ -49,10 +54,10 @@ const NetworkView: React.FC<Props> = () => {
 
   const layout = {
     type: layoutType,
-    linkDistance: 250,         // 可选，边长
-    nodeStrength: 10,         // 可选
-    edgeStrength: 0.1,        // 可选
-    nodeSize: 20,             // 可选
+    linkDistance: 250, // 可选，边长
+    nodeStrength: 10, // 可选
+    edgeStrength: 0.1, // 可选
+    nodeSize: 20, // 可选
   }
 
   return (
@@ -60,6 +65,7 @@ const NetworkView: React.FC<Props> = () => {
       <section className={styles.leftToolbox}>
         <div>
           <strong>Data</strong>
+          <DataPanel network={network} onNetworkChange={setNetwork}></DataPanel>
         </div>
       </section>
       <section className={styles.rightToolbox}>
@@ -74,7 +80,14 @@ const NetworkView: React.FC<Props> = () => {
           ))}
         </select>
       </section>
-      <Graphin data={data} layout={layout} height={height - 64} width={width} fitView />
+      <Graphin
+        key={`${width}:${height}`}
+        data={graphinData}
+        layout={layout}
+        height={height - 64}
+        width={width}
+        fitView
+      />
     </section>
   )
 }

@@ -1,4 +1,4 @@
-import wakatimeLeaders from './wakatime-leaders.json'
+import wakatimeLeaders from '../data/wakatime-leaders.json'
 
 type DataFormatStringArray = string[][]
 
@@ -21,12 +21,13 @@ type Edge = {
   style: { keyshape: { lineWidth: number } }
 }
 
-type Network = {
+export type Network = {
+  name: string
   nodes: Node[]
   edges: Edge[]
 }
 
-const convertFormatStringArrayToNetwork = (data: DataFormatStringArray, limit = 30): Network => {
+const convertFormatStringArrayToNetwork = (name: string, data: DataFormatStringArray, limit = 30): Network => {
   const nodes: Node[] = []
   const edges: Edge[] = []
   const counter: Record<string, number> = {}
@@ -76,12 +77,16 @@ const convertFormatStringArrayToNetwork = (data: DataFormatStringArray, limit = 
     })
   })
 
-  return { nodes, edges }
+  return {
+    name,
+    nodes,
+    edges,
+  }
 }
 
 export const getDemoData = (type: 'wakatime-leaders'): Network => {
   if (type === 'wakatime-leaders') {
-    return convertFormatStringArrayToNetwork(wakatimeLeaders)
+    return convertFormatStringArrayToNetwork('wakatime-leaders', wakatimeLeaders)
   } else {
     throw new Error('Unknown type')
   }
