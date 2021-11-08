@@ -62,7 +62,7 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
             }}
           >
             <Button icon={<UploadOutlined className="align-text-top" />} size="small">
-              Click to Upload
+              Select File
             </Button>
           </Upload>
         </div>

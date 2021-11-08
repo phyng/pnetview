@@ -12,13 +12,14 @@ interface Props {
 
 const NetworkView: React.FC<Props> = () => {
   const { width, height } = useWindowSize()
-  const [layoutType, setLayoutType] = useState('force')
   const [network, setNetwork] = useState(getDemoData('wakatime-leaders'))
-  console.log('network', network)
+  const [layoutType, setLayoutType] = useState('force')
+  const [arrowType, setArrowType] = useState('none')
 
   const graphinData = useMemo(() => {
-    const nodes = network.nodes
-    const edges = Utils.processEdges(network.edges, {
+    const networkClone = JSON.parse(JSON.stringify(network))
+    const nodes = networkClone.nodes
+    const edges = Utils.processEdges(networkClone.edges, {
       poly: 50,
       loop: 100,
     })
@@ -31,13 +32,19 @@ const NetworkView: React.FC<Props> = () => {
         edge.style.keyshape = edge.style.keyshape || {}
         edge.style.keyshape.stroke = '#ccc'
         edge.style.keyshape.opacity = 0.5
+
+        if (arrowType === 'none') {
+          edge.style.keyshape.endArrow = {
+            path: ''
+          }
+        }
       }
     })
     return {
       nodes,
       edges,
     }
-  }, [network])
+  }, [network, arrowType])
 
   const choices = [
     'graphin-force',
@@ -50,6 +57,11 @@ const NetworkView: React.FC<Props> = () => {
     'grid',
     'radial',
     'mds',
+  ]
+
+  const arrowChoices = [
+    'none',
+    'edge',
   ]
 
   const layout = {
@@ -70,15 +82,30 @@ const NetworkView: React.FC<Props> = () => {
       </section>
       <section className={styles.rightToolbox}>
         <div>
-          <strong>Style</strong>
+          <strong className="text-lg mb-2">Style</strong>
         </div>
-        <select value={layoutType} onChange={(e) => setLayoutType(e.target.value)}>
-          {choices.map((id) => (
-            <option key={id} value={id}>
-              {id}
-            </option>
-          ))}
-        </select>
+
+        <div>
+          <strong>arrowType:</strong>
+          <select value={arrowType} onChange={(e) => setArrowType(e.target.value)} style={{width: 120}}>
+            {arrowChoices.map((id) => (
+              <option key={id} value={id}>
+                {id}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <strong>layoutType:</strong>
+          <select value={layoutType} onChange={(e) => setLayoutType(e.target.value)} style={{width: 120}}>
+            {choices.map((id) => (
+              <option key={id} value={id}>
+                {id}
+              </option>
+            ))}
+          </select>
+        </div>
       </section>
       <Graphin
         key={`${width}:${height}`}

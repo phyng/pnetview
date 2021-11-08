@@ -19,7 +19,14 @@ type Edge = {
   source: string
   target: string
   value: number
-  style: { keyshape: { lineWidth: number } }
+  style: {
+    keyshape: {
+      lineWidth: number
+      endArrow?: {
+        path: string
+      }
+    }
+  }
 }
 
 export type Network = {
@@ -41,7 +48,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
       }
     }
   }
-  console.log('counter', counter)
+
   const maxCount = Math.max(...Object.values(counter)) || 0
   Array.from(Object.entries(counter))
     .sort((a, b) => b[1] - a[1])
@@ -52,7 +59,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
         id: name,
         style: {
           keyshape: {
-            size: size < 5 ? 5 : size,
+            size: size < 5 ? 5 : size
           },
           label: {
             value: name,
@@ -73,7 +80,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
         style: {
           keyshape: {
             lineWidth: lineWidth < 1 ? 1 : lineWidth,
-          },
+          }
         },
       })
     })
