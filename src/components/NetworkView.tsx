@@ -64,7 +64,7 @@ const NetworkView: React.FC<Props> = () => {
     <section className={styles.container}>
       <section className={styles.leftToolbox}>
         <div>
-          <strong>Data</strong>
+          <strong className="text-lg mb-2">Data</strong>
           <DataPanel network={network} onNetworkChange={setNetwork}></DataPanel>
         </div>
       </section>

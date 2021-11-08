@@ -1,6 +1,7 @@
 import wakatimeLeaders from '../data/wakatime-leaders.json'
+import { message } from 'antd'
 
-type DataFormatStringArray = string[][]
+type FormatStringArray = string[][]
 
 type Node = {
   id: string
@@ -27,7 +28,7 @@ export type Network = {
   edges: Edge[]
 }
 
-const convertFormatStringArrayToNetwork = (name: string, data: DataFormatStringArray, limit = 30): Network => {
+const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 30): Network => {
   const nodes: Node[] = []
   const edges: Edge[] = []
   const counter: Record<string, number> = {}
@@ -63,6 +64,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: DataFormatStringA
   nodes.forEach((node, index) => {
     nodes.slice(index + 1, index + 1 + 3).forEach((otherNode) => {
       const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
+      if (!count) return
       const lineWidth = (count / maxCount) * 20
       edges.push({
         source: node.id,
@@ -90,4 +92,28 @@ export const getDemoData = (type: 'wakatime-leaders'): Network => {
   } else {
     throw new Error('Unknown type')
   }
+}
+
+export const getNetworkFromText = (name: string, text: string): Network | null => {
+  try {
+    const data = JSON.parse(text)
+    if (data.edges && data.nodes) {
+      return {...data, name} as Network
+    } else {
+      message.error(`${name} is invalid json file`)
+      return null
+    }
+  } catch (e) {
+    //
+  }
+
+  // FormatStringArray
+  const lines = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter((line) => line.length > 0)
+    .map(line => line.split(',').map(i => i.trim()).filter((i) => i.length > 0))
+    .filter((tokens) => tokens.length > 0)
+
+  return convertFormatStringArrayToNetwork(name, lines)
 }
