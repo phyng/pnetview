@@ -53,19 +53,19 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
       <section className="mb-2">
         {/* <div className="font-bold mb-1">summary</div> */}
         <div>
-          name: {network.name}
+          名称: {network.name}
           &nbsp;&nbsp;
           <span className="text-gray-400 cursor-pointer" title="click to download network" onClick={e => {
             e.stopPropagation()
             handleDownload()
-          }}>Download</span>
+          }}>下载</span>
         </div>
-        <div>nodes: {network.nodes.length}</div>
-        <div>lnks: {network.edges.length}</div>
+        <div>节点: {network.nodes.length}</div>
+        <div>链接: {network.edges.length}</div>
       </section>
 
       <div className="mb-2">
-        <div className="font-bold mb-2">Upload</div>
+        <div className="font-bold mb-2">上传</div>
         <div>
           <Upload
             accept=".json,.txt,.csv"
@@ -79,18 +79,18 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
             }}
           >
             <Button icon={<UploadOutlined className="align-text-top" />} size="small">
-              Select File
+              选择文件
             </Button>
           </Upload>
         </div>
       </div>
 
       <div className="mb-2">
-        <div className="font-bold mb-2">Files</div>
+        <div className="font-bold mb-2">文件列表</div>
         <div>
           {!fileItems.length && (
             <div>
-              <span className="text-gray-500">No files</span>
+              <span className="text-gray-500">暂无文件</span>
             </div>
           )}
           {fileItems.length > 0 && (
@@ -104,13 +104,13 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
                 >
                   <span className={file === currentFileItem ? 'font-bold' : 'text-gray-500'}>
                     {file.name}
-                    {file.network && <span>(nodes:{file.network.nodes.length} edges:{file.network.edges.length})</span>}
-                    {!file.network && <span>(no network)</span>}
+                    {file.network && <span>(节点:{file.network.nodes.length} 链接:{file.network.edges.length})</span>}
+                    {!file.network && <span>(无网络)</span>}
                     &nbsp;&nbsp;
-                    <span className="text-gray-400" title="click to remove file" onClick={e => {
+                    <span className="text-gray-400" title="点击移除文件" onClick={e => {
                       e.stopPropagation()
                       setFileItems(files => files.filter(f => f !== file))
-                    }}>Remove</span>
+                    }}>移除</span>
                   </span>
                 </div>
               ))}

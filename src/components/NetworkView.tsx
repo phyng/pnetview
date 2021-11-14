@@ -4,7 +4,8 @@ import { useWindowSize } from 'react-use'
 import styles from './NetworkView.module.scss'
 import { getDemoData, Network, Node, Edge } from '../services/network'
 import DataPanel from './DataPanel'
-import { Row, Col, InputNumber, Select, Button } from 'antd'
+import { Row, Col, Input, InputNumber, Select, Button } from 'antd'
+// import { SketchPicker } from 'react-color'
 
 interface Props {
   value?: string
@@ -17,10 +18,30 @@ type NetworkFilters = {
   edgeTopCount: number
   nodeSizeScale: number
   edgeLineWidthScale: number
+
+  nodeStyleKeyshapeStroke: string
+  nodeStyleKeyshapeFill: string
+  nodeStyleKeyshapeFillOpacity: number
+
+  edgeStyleKeyshapeStroke: string
+  edgeStyleKeyshapeOpacity: number
 }
 
 const filterNetwork = (network: Network, filters: NetworkFilters) => {
-  const { nodeTopCount, edgeTopCount, minEdgeValue, nodeSizeScale, edgeLineWidthScale } = filters
+  const {
+    nodeTopCount,
+    edgeTopCount,
+    minEdgeValue,
+    nodeSizeScale,
+    edgeLineWidthScale,
+
+    nodeStyleKeyshapeStroke,
+    nodeStyleKeyshapeFill,
+    nodeStyleKeyshapeFillOpacity,
+
+    edgeStyleKeyshapeStroke,
+    edgeStyleKeyshapeOpacity,
+  } = filters
   const { nodes, edges, ...rest } = JSON.parse(JSON.stringify(network)) as Network
   const getNodeValue = (node: Node) => edges.filter((edge) => [edge.source, edge.target].includes(node.id)).length
   const filteredNodes = nodes
@@ -34,6 +55,9 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
           keyshape: {
             ...node.style.keyshape,
             size: node.style.keyshape.size * nodeSizeScale,
+            stroke: nodeStyleKeyshapeStroke || node.style.keyshape.stroke,
+            fill: nodeStyleKeyshapeFill || node.style.keyshape.fill,
+            fillOpacity: nodeStyleKeyshapeFillOpacity || node.style.keyshape.fillOpacity,
           },
         },
       }
@@ -51,6 +75,8 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
           keyshape: {
             ...edge.style.keyshape,
             lineWidth: edge.style.keyshape.lineWidth * edgeLineWidthScale,
+            stroke: edgeStyleKeyshapeStroke || edge.style.keyshape.stroke,
+            opacity: edgeStyleKeyshapeOpacity || edge.style.keyshape.opacity,
           },
         },
       }
@@ -85,6 +111,12 @@ const NetworkView: React.FC<Props> = () => {
     minEdgeValue: 0,
     nodeSizeScale: 1,
     edgeLineWidthScale: 1,
+    nodeStyleKeyshapeStroke: '',
+    nodeStyleKeyshapeFill: '',
+    nodeStyleKeyshapeFillOpacity: 0.2,
+
+    edgeStyleKeyshapeStroke: '#ccc',
+    edgeStyleKeyshapeOpacity: 0.5,
   })
 
   const graphinData = useMemo(() => {
@@ -101,8 +133,8 @@ const NetworkView: React.FC<Props> = () => {
           value: '', // edge.value,
         }
         edge.style.keyshape = edge.style.keyshape || {}
-        edge.style.keyshape.stroke = '#ccc'
-        edge.style.keyshape.opacity = 0.5
+        // edge.style.keyshape.stroke = '#ccc'
+        // edge.style.keyshape.opacity = 0.5
 
         if (arrowType === 'none') {
           edge.style.keyshape.endArrow = {
@@ -147,11 +179,11 @@ const NetworkView: React.FC<Props> = () => {
     <section className={styles.container}>
       <section className={styles.leftToolbox}>
         <div>
-          <strong className="text-lg mb-2">Data</strong>
+          <strong className="text-lg mb-2">网络数据</strong>
           <DataPanel network={network} onNetworkChange={setNetwork}></DataPanel>
         </div>
         <div className="mb-2">
-          <div className="font-bold mb-2">Filters</div>
+          <div className="font-bold mb-2">网络过滤</div>
           <section>
             <Row className="mb-1">
               <Col span={12}><span style={{lineHeight: '24px'}}>节点数量</span></Col>
@@ -160,6 +192,7 @@ const NetworkView: React.FC<Props> = () => {
                   value={networkFilters.nodeTopCount}
                   onChange={(e) => setNetworkFilters({ ...networkFilters, nodeTopCount: e })}
                   size="small"
+                  style={{ width: '100%' }}
                 ></InputNumber>
               </Col>
             </Row>
@@ -170,6 +203,7 @@ const NetworkView: React.FC<Props> = () => {
                   value={networkFilters.edgeTopCount}
                   onChange={(e) => setNetworkFilters({ ...networkFilters, edgeTopCount: e })}
                   size="small"
+                  style={{ width: '100%' }}
                 ></InputNumber>
               </Col>
             </Row>
@@ -180,6 +214,7 @@ const NetworkView: React.FC<Props> = () => {
                   value={networkFilters.minEdgeValue}
                   onChange={(e) => setNetworkFilters({ ...networkFilters, minEdgeValue: e })}
                   size="small"
+                  style={{ width: '100%' }}
                 ></InputNumber>
               </Col>
             </Row>
@@ -191,6 +226,7 @@ const NetworkView: React.FC<Props> = () => {
                   onChange={(e) => setNetworkFilters({ ...networkFilters, nodeSizeScale: e })}
                   step={0.1}
                   size="small"
+                  style={{ width: '100%' }}
                 ></InputNumber>
               </Col>
             </Row>
@@ -202,6 +238,7 @@ const NetworkView: React.FC<Props> = () => {
                   onChange={(e) => setNetworkFilters({ ...networkFilters, edgeLineWidthScale: e })}
                   step={0.1}
                   size="small"
+                  style={{ width: '100%' }}
                 ></InputNumber>
               </Col>
             </Row>
@@ -210,7 +247,7 @@ const NetworkView: React.FC<Props> = () => {
       </section>
       <section className={styles.rightToolbox}>
         <div>
-          <strong className="text-lg mb-2">Style</strong>
+          <strong className="text-lg mb-2">样式设置</strong>
         </div>
         <section>
           <Row className="mb-1">
@@ -245,6 +282,65 @@ const NetworkView: React.FC<Props> = () => {
                   </option>
                 ))}
               </Select>
+            </Col>
+          </Row>
+
+          <Row className="mb-1">
+            <Col span={12}><span style={{lineHeight: '24px'}}>节点边框颜色</span></Col>
+            <Col span={12}>
+              <Input
+                value={networkFilters.nodeStyleKeyshapeStroke}
+                onChange={(e) => setNetworkFilters({ ...networkFilters, nodeStyleKeyshapeStroke: e.target.value })}
+                size="small"
+                placeholder="输入颜色"
+              ></Input>
+            </Col>
+          </Row>
+          <Row className="mb-1">
+            <Col span={12}><span style={{lineHeight: '24px'}}>节点填充颜色</span></Col>
+            <Col span={12}>
+              <Input
+                value={networkFilters.nodeStyleKeyshapeFill}
+                onChange={(e) => setNetworkFilters({ ...networkFilters, nodeStyleKeyshapeFill: e.target.value })}
+                size="small"
+                placeholder="输入颜色"
+              ></Input>
+            </Col>
+          </Row>
+          <Row className="mb-1">
+            <Col span={12}><span style={{lineHeight: '24px'}}>节点填充透明度</span></Col>
+            <Col span={12}>
+              <InputNumber
+                value={networkFilters.nodeStyleKeyshapeFillOpacity}
+                onChange={(e) => setNetworkFilters({ ...networkFilters, nodeStyleKeyshapeFillOpacity: e })}
+                step={0.1}
+                size="small"
+                style={{ width: '100%' }}
+              ></InputNumber>
+            </Col>
+          </Row>
+
+          <Row className="mb-1">
+            <Col span={12}><span style={{lineHeight: '24px'}}>边的颜色</span></Col>
+            <Col span={12}>
+              <Input
+                value={networkFilters.edgeStyleKeyshapeStroke}
+                onChange={(e) => setNetworkFilters({ ...networkFilters, edgeStyleKeyshapeStroke: e.target.value })}
+                size="small"
+                placeholder="输入颜色"
+              ></Input>
+            </Col>
+          </Row>
+          <Row className="mb-1">
+            <Col span={12}><span style={{lineHeight: '24px'}}>边的透明度</span></Col>
+            <Col span={12}>
+              <InputNumber
+                value={networkFilters.edgeStyleKeyshapeOpacity}
+                onChange={(e) => setNetworkFilters({ ...networkFilters, edgeStyleKeyshapeOpacity: e })}
+                step={0.1}
+                size="small"
+                style={{ width: '100%' }}
+              ></InputNumber>
             </Col>
           </Row>
         </section>

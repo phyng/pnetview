@@ -8,6 +8,9 @@ export type Node = {
   style: {
     keyshape: {
       size: number
+      stroke?: string
+      fill?: string
+      fillOpacity?: number
     }
     label: {
       value: string
@@ -22,6 +25,8 @@ export type Edge = {
   style: {
     keyshape: {
       lineWidth: number
+      stroke?: string
+      opacity?: number
       endArrow?: {
         path: string
       }
