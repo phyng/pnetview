@@ -3,7 +3,7 @@ import { message } from 'antd'
 
 type FormatStringArray = string[][]
 
-type Node = {
+export type Node = {
   id: string
   style: {
     keyshape: {
@@ -15,7 +15,7 @@ type Node = {
   }
 }
 
-type Edge = {
+export type Edge = {
   source: string
   target: string
   value: number
@@ -35,7 +35,7 @@ export type Network = {
   edges: Edge[]
 }
 
-const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 30): Network => {
+const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 100): Network => {
   const nodes: Node[] = []
   const edges: Edge[] = []
   const counter: Record<string, number> = {}
@@ -59,7 +59,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
         id: name,
         style: {
           keyshape: {
-            size: size < 5 ? 5 : size
+            size: size
           },
           label: {
             value: name,
@@ -69,7 +69,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
     })
 
   nodes.forEach((node, index) => {
-    nodes.slice(index + 1, index + 1 + 3).forEach((otherNode) => {
+    nodes.slice(index + 1).forEach((otherNode) => {
       const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
       if (!count) return
       const lineWidth = (count / maxCount) * 20
@@ -79,7 +79,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
         value: count,
         style: {
           keyshape: {
-            lineWidth: lineWidth < 1 ? 1 : lineWidth,
+            lineWidth: lineWidth,
           }
         },
       })
