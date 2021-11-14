@@ -65,7 +65,7 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
   const nodeIds = filteredNodes.map((node) => node.id)
   const filteredEdges = edges
     .filter(
-      ({ source, target, value }) => nodeIds.includes(source) && nodeIds.includes(target) && value >= minEdgeValue
+      ({ source, target, value }) => source !== target && nodeIds.includes(source) && nodeIds.includes(target) && value >= minEdgeValue
     )
     .map((edge) => {
       return {

@@ -74,7 +74,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
     })
 
   nodes.forEach((node, index) => {
-    nodes.slice(index + 1).forEach((otherNode) => {
+    nodes.slice(index).forEach((otherNode) => {
       const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
       if (!count) return
       const lineWidth = (count / maxCount) * 20
@@ -96,6 +96,37 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
     nodes,
     edges,
   }
+}
+
+const networkToCorrelation = (network: Network): string[][] => {
+  const { nodes, edges } = network
+  const correlation: string[][] = []
+
+  for (const node of nodes) {
+    const line: string[] = [node.id]
+    for (const otherNode of nodes) {
+      const _edges = edges.filter((edge) => (
+        (edge.source === node.id && edge.target === otherNode.id) ||
+        (edge.target === node.id && edge.source === otherNode.id)
+      ))
+      const count = _edges.reduce((acc, edge) => acc + edge.value, 0)
+      line.push(count.toString())
+    }
+    correlation.push(line)
+  }
+
+  return correlation
+}
+
+const correlationToText = (correlation: string[][]): string => {
+  const text = correlation.map((line) => line.join(',')).join('\n')
+  return text
+}
+
+export const networkToCorrelationText = (network: Network): string => {
+  const correlation = networkToCorrelation(network)
+  const text = correlationToText(correlation)
+  return text
 }
 
 export const getDemoData = (type: 'wakatime-leaders'): Network => {

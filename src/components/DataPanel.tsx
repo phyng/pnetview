@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Network, getNetworkFromText } from '../services/network'
 import { Upload, Button, message } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
+import { downloadFile } from '../services/utils'
+import { Network, getNetworkFromText, networkToCorrelationText } from '../services/network'
 
 type Props = {
   network: Network
@@ -28,14 +29,18 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
     onNetworkChange && onNetworkChange(fileItem.network)
   }
 
-  const handleDownload = () => {
-    const text = JSON.stringify(network, null, 2)
-    const a = window.document.createElement('a')
-    a.href = window.URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
-    a.download = `${network.name.split('.')[0]}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+  const handleDownloadJSON = () => {
+    downloadFile(
+      `${network.name.split('.')[0]}_network.json`,
+      JSON.stringify(network, null, 2)
+    )
+  }
+
+  const handleDownloadCorrelationText = () => {
+    downloadFile(
+      `${network.name.split('.')[0]}_correlation.csv`,
+      networkToCorrelationText(network)
+    )
   }
 
   const handleUpload = async (file: File) => {
@@ -57,8 +62,15 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
           &nbsp;&nbsp;
           <span className="text-gray-400 cursor-pointer" title="click to download network" onClick={e => {
             e.stopPropagation()
-            handleDownload()
-          }}>下载</span>
+            handleDownloadJSON()
+          }}>下载网络</span>
+
+          <span className="text-gray-400 cursor-pointer inline-block ml-1" title="click to download network" onClick={e => {
+            e.stopPropagation()
+            handleDownloadCorrelationText()
+          }}>下载合作</span>
+
+
         </div>
         <div>节点: {network.nodes.length}</div>
         <div>链接: {network.edges.length}</div>
