@@ -36,6 +36,7 @@ export type Edge = {
 
 export type Network = {
   name: string
+  direction?: boolean
   nodes: Node[]
   edges: Edge[]
 }
@@ -73,26 +74,63 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
       })
     })
 
-  nodes.forEach((node, index) => {
-    nodes.slice(index).forEach((otherNode) => {
-      const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
-      if (!count) return
-      const lineWidth = (count / maxCount) * 20
-      edges.push({
-        source: node.id,
-        target: otherNode.id,
-        value: count,
-        style: {
-          keyshape: {
-            lineWidth: lineWidth,
-          }
-        },
+  const hasDirection = data.filter((line) => line.length === 2).length === data.length
+  if (hasDirection) {
+    nodes.forEach((node, index) => {
+      nodes.slice(index).forEach((otherNode) => {
+        const totalCount = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
+        if (!totalCount) return
+
+        // source -> target
+        const sourceTargetCount = data.filter((line) => line[0] === node.id && line[1] === otherNode.id).length
+        sourceTargetCount && edges.push({
+          source: node.id,
+          target: otherNode.id,
+          value: sourceTargetCount,
+          style: {
+            keyshape: {
+              lineWidth: (sourceTargetCount / maxCount) * 20,
+            }
+          },
+        })
+
+        // target -> source: 当 target === source 时忽略
+        const targetSourceCount = data.filter((line) => line[0] === otherNode.id && line[1] === node.id && line[0] !== line[1]).length
+        targetSourceCount && edges.push({
+          source: otherNode.id,
+          target: node.id,
+          value: targetSourceCount,
+          style: {
+            keyshape: {
+              lineWidth: (targetSourceCount / maxCount) * 20,
+            }
+          },
+        })
       })
     })
-  })
+  } else {
+    nodes.forEach((node, index) => {
+      nodes.slice(index).forEach((otherNode) => {
+        const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
+        if (!count) return
+        const lineWidth = (count / maxCount) * 20
+        edges.push({
+          source: node.id,
+          target: otherNode.id,
+          value: count,
+          style: {
+            keyshape: {
+              lineWidth: lineWidth,
+            }
+          },
+        })
+      })
+    })
+  }
 
   return {
     name,
+    direction: hasDirection,
     nodes,
     edges,
   }

@@ -111,8 +111,8 @@ const NetworkView: React.FC<Props> = () => {
     minEdgeValue: 0,
     nodeSizeScale: 1,
     edgeLineWidthScale: 1,
-    nodeStyleKeyshapeStroke: '',
-    nodeStyleKeyshapeFill: '',
+    nodeStyleKeyshapeStroke: '#037ef3',
+    nodeStyleKeyshapeFill: '#037ef3',
     nodeStyleKeyshapeFillOpacity: 0.2,
 
     edgeStyleKeyshapeStroke: '#ccc',
