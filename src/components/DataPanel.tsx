@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Upload, Button, message } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import { Modal, Upload, Button, message } from 'antd'
+import { UploadOutlined, EditOutlined } from '@ant-design/icons'
 import { downloadFile } from '../services/utils'
 import { Network, getNetworkFromText, networkToCorrelationText } from '../services/network'
+import DataEditor from './DataEditor'
 
 type Props = {
   network: Network
@@ -18,6 +19,7 @@ type FileItem = {
 const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
   const [fileItems, setFileItems] = useState<FileItem[]>([])
   const [currentFileItem, setCurrentFileItem] = useState<FileItem | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const selectFileItem = (fileItem: FileItem) => {
     console.log('selectFileItem', fileItem)
@@ -47,8 +49,22 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
     selectFileItem(fileItem)
   }
 
+  const handleShowEdit = () => {
+    setShowEditModal(true)
+  }
+
   return (
     <section>
+      <Modal
+        title="编辑网络"
+        visible={showEditModal}
+        onCancel={() => setShowEditModal(false)}
+        width={1350}
+        footer={null}
+      >
+        <DataEditor network={network} onNetworkChange={onNetworkChange}></DataEditor>
+      </Modal>
+
       <section className="mb-2">
         {/* <div className="font-bold mb-1">summary</div> */}
         <div>名称: {network.name}</div>
@@ -108,7 +124,7 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
                   title="click to select file"
                   onClick={() => selectFileItem(file)}
                 >
-                  <span className={file === currentFileItem ? '' : 'text-gray-400'} style={{lineHeight: '24px'}}>
+                  <span className={file === currentFileItem ? '' : 'text-gray-400'} style={{ lineHeight: '24px' }}>
                     {file.name}
                     {file.network && (
                       <span>
@@ -132,6 +148,15 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="mb-2">
+        <div className="font-bold mb-2">编辑网络</div>
+        <div>
+          <Button icon={<EditOutlined className="align-text-top" />} size="small" onClick={handleShowEdit}>
+            编辑网络
+          </Button>
         </div>
       </div>
     </section>

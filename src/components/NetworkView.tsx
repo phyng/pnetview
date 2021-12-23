@@ -55,9 +55,9 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
           keyshape: {
             ...node.style.keyshape,
             size: node.style.keyshape.size * nodeSizeScale,
-            stroke: nodeStyleKeyshapeStroke || node.style.keyshape.stroke,
-            fill: nodeStyleKeyshapeFill || node.style.keyshape.fill,
-            fillOpacity: nodeStyleKeyshapeFillOpacity || node.style.keyshape.fillOpacity,
+            stroke: node.style.keyshape.stroke || nodeStyleKeyshapeStroke,
+            fill: node.style.keyshape.fill || nodeStyleKeyshapeFill,
+            fillOpacity: node.style.keyshape.fillOpacity || nodeStyleKeyshapeFillOpacity,
           },
         },
       }
