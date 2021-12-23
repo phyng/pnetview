@@ -56,11 +56,12 @@ const DataPanel: React.FC<Props> = ({ network, onNetworkChange }) => {
   return (
     <section>
       <Modal
-        title="编辑网络"
+        title={'编辑网络: ' + network.name}
         visible={showEditModal}
         onCancel={() => setShowEditModal(false)}
         width={1350}
         footer={null}
+        keyboard={false}
       >
         <DataEditor network={network} onNetworkChange={onNetworkChange}></DataEditor>
       </Modal>
