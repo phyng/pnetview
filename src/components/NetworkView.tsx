@@ -43,7 +43,7 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
     edgeStyleKeyshapeOpacity,
   } = filters
   const { nodes, edges, ...rest } = JSON.parse(JSON.stringify(network)) as Network
-  const getNodeValue = (node: Node) => edges.filter((edge) => [edge.source, edge.target].includes(node.id)).length
+  const getNodeValue = (node: Node) => edges.map((edge) => [edge.source, edge.target].includes(node.id) ? edge.value : 0).reduce((a, b) => a + b, 0)
   const filteredNodes = nodes
     .sort((a, b) => getNodeValue(b) - getNodeValue(a))
     .slice(0, nodeTopCount)
@@ -101,7 +101,7 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
 
 const NetworkView: React.FC<Props> = () => {
   const { width, height } = useWindowSize()
-  const [network, setNetwork] = useState(getDemoData('wakatime-leaders'))
+  const [network, setNetwork] = useState(() => getDemoData('wakatime-leaders'))
   const [layoutType, setLayoutType] = useState('force')
   const [arrowType, setArrowType] = useState('none')
   const [renderKey, setRenderKey] = useState(0)
@@ -120,7 +120,9 @@ const NetworkView: React.FC<Props> = () => {
   })
 
   const graphinData = useMemo(() => {
+    console.time('filterNetwork')
     const networkClone = filterNetwork(network, networkFilters)
+    console.timeEnd('filterNetwork')
     const nodes = networkClone.nodes
     const edges = Utils.processEdges(networkClone.edges, {
       poly: 50,

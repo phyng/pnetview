@@ -5,6 +5,7 @@ type FormatStringArray = string[][]
 
 export type Node = {
   id: string
+  value: number
   style: {
     keyshape: {
       size: number
@@ -41,7 +42,7 @@ export type Network = {
   edges: Edge[]
 }
 
-const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 100): Network => {
+const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 2000): Network => {
   const nodes: Node[] = []
   const edges: Edge[] = []
   const counter: Record<string, number> = {}
@@ -60,9 +61,10 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
     .forEach(([name, count]) => {
-      const size = (count / maxCount) * 50
+      const size = Math.ceil((count / maxCount) * 50 * 100) / 100
       nodes.push({
         id: name,
+        value: count,
         style: {
           keyshape: {
             size: size
@@ -89,7 +91,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
           value: sourceTargetCount,
           style: {
             keyshape: {
-              lineWidth: (sourceTargetCount / maxCount) * 20,
+              lineWidth: Math.ceil((sourceTargetCount / maxCount) * 20 * 100) / 100,
             }
           },
         })
@@ -102,7 +104,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
           value: targetSourceCount,
           style: {
             keyshape: {
-              lineWidth: (targetSourceCount / maxCount) * 20,
+              lineWidth: Math.ceil((targetSourceCount / maxCount) * 20 * 100) / 100,
             }
           },
         })
@@ -113,7 +115,7 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
       nodes.slice(index).forEach((otherNode) => {
         const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
         if (!count) return
-        const lineWidth = (count / maxCount) * 20
+        const lineWidth = Math.ceil((count / maxCount) * 20 * 100) / 100
         edges.push({
           source: node.id,
           target: otherNode.id,
