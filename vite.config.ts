@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import reactRefresh from '@vitejs/plugin-react-refresh'
+import react from '@vitejs/plugin-react'
 import vitePluginImp from 'vite-plugin-imp'
 
 // https://vitejs.dev/config/
@@ -9,7 +9,7 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
-    reactRefresh() as undefined,
+    react(),
     vitePluginImp({
       libList: [
         {

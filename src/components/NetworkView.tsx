@@ -262,9 +262,9 @@ const NetworkView: React.FC<Props> = () => {
                 style={{ width: '100%' }}
               >
                 {arrowChoices.map((choice) => (
-                  <option key={choice.id} value={choice.id}>
+                  <Select.Option key={choice.id} value={choice.id}>
                     {choice.name}
-                  </option>
+                  </Select.Option>
                 ))}
               </Select>
             </Col>
@@ -279,9 +279,9 @@ const NetworkView: React.FC<Props> = () => {
                 style={{ width: '100%' }}
               >
                 {layoutChoices.map((choice) => (
-                  <option key={choice.id} value={choice.id}>
+                  <Select.Option key={choice.id} value={choice.id}>
                     {choice.name}
-                  </option>
+                  </Select.Option>
                 ))}
               </Select>
             </Col>
@@ -354,8 +354,8 @@ const NetworkView: React.FC<Props> = () => {
         key={`${width}:${height}:${renderKey}`}
         data={graphinData}
         layout={layout}
-        height={height - 64}
-        width={width}
+        height={height - 64 - 10}
+        width={width - 10}
         fitView
       />
     </section>

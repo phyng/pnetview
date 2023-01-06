@@ -3,7 +3,10 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   mode: 'jit',
-  purge: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  corePlugins: {
+    preflight: false,
+  },
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       fontWeight: ['hover', 'focus'],
