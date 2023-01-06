@@ -43,7 +43,7 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
     edgeStyleKeyshapeOpacity,
   } = filters
   const { nodes, edges, ...rest } = JSON.parse(JSON.stringify(network)) as Network
-  const getNodeValue = (node: Node) => edges.filter((edge) => [edge.source, edge.target].includes(node.id)).length
+  const getNodeValue = (node: Node) => edges.map((edge) => [edge.source, edge.target].includes(node.id) ? edge.value : 0).reduce((a, b) => a + b, 0)
   const filteredNodes = nodes
     .sort((a, b) => getNodeValue(b) - getNodeValue(a))
     .slice(0, nodeTopCount)
@@ -55,9 +55,9 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
           keyshape: {
             ...node.style.keyshape,
             size: node.style.keyshape.size * nodeSizeScale,
-            stroke: nodeStyleKeyshapeStroke || node.style.keyshape.stroke,
-            fill: nodeStyleKeyshapeFill || node.style.keyshape.fill,
-            fillOpacity: nodeStyleKeyshapeFillOpacity || node.style.keyshape.fillOpacity,
+            stroke: node.style.keyshape.stroke || nodeStyleKeyshapeStroke,
+            fill: node.style.keyshape.fill || nodeStyleKeyshapeFill,
+            fillOpacity: node.style.keyshape.fillOpacity || nodeStyleKeyshapeFillOpacity,
           },
         },
       }
@@ -101,7 +101,7 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
 
 const NetworkView: React.FC<Props> = () => {
   const { width, height } = useWindowSize()
-  const [network, setNetwork] = useState(getDemoData('wakatime-leaders'))
+  const [network, setNetwork] = useState(() => getDemoData('wakatime-leaders'))
   const [layoutType, setLayoutType] = useState('force')
   const [arrowType, setArrowType] = useState('none')
   const [renderKey, setRenderKey] = useState(0)
@@ -111,8 +111,8 @@ const NetworkView: React.FC<Props> = () => {
     minEdgeValue: 0,
     nodeSizeScale: 1,
     edgeLineWidthScale: 1,
-    nodeStyleKeyshapeStroke: '',
-    nodeStyleKeyshapeFill: '',
+    nodeStyleKeyshapeStroke: '#037ef3',
+    nodeStyleKeyshapeFill: '#037ef3',
     nodeStyleKeyshapeFillOpacity: 0.2,
 
     edgeStyleKeyshapeStroke: '#ccc',
@@ -120,7 +120,9 @@ const NetworkView: React.FC<Props> = () => {
   })
 
   const graphinData = useMemo(() => {
+    console.time('filterNetwork')
     const networkClone = filterNetwork(network, networkFilters)
+    console.timeEnd('filterNetwork')
     const nodes = networkClone.nodes
     const edges = Utils.processEdges(networkClone.edges, {
       poly: 50,
@@ -260,9 +262,9 @@ const NetworkView: React.FC<Props> = () => {
                 style={{ width: '100%' }}
               >
                 {arrowChoices.map((choice) => (
-                  <option key={choice.id} value={choice.id}>
+                  <Select.Option key={choice.id} value={choice.id}>
                     {choice.name}
-                  </option>
+                  </Select.Option>
                 ))}
               </Select>
             </Col>
@@ -277,9 +279,9 @@ const NetworkView: React.FC<Props> = () => {
                 style={{ width: '100%' }}
               >
                 {layoutChoices.map((choice) => (
-                  <option key={choice.id} value={choice.id}>
+                  <Select.Option key={choice.id} value={choice.id}>
                     {choice.name}
-                  </option>
+                  </Select.Option>
                 ))}
               </Select>
             </Col>
@@ -352,8 +354,8 @@ const NetworkView: React.FC<Props> = () => {
         key={`${width}:${height}:${renderKey}`}
         data={graphinData}
         layout={layout}
-        height={height - 64}
-        width={width}
+        height={height - 64 - 10}
+        width={width - 10}
         fitView
       />
     </section>

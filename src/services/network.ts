@@ -5,6 +5,7 @@ type FormatStringArray = string[][]
 
 export type Node = {
   id: string
+  value: number
   style: {
     keyshape: {
       size: number
@@ -36,11 +37,12 @@ export type Edge = {
 
 export type Network = {
   name: string
+  direction?: boolean
   nodes: Node[]
   edges: Edge[]
 }
 
-const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 100): Network => {
+const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray, limit = 2000): Network => {
   const nodes: Node[] = []
   const edges: Edge[] = []
   const counter: Record<string, number> = {}
@@ -59,9 +61,10 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
     .forEach(([name, count]) => {
-      const size = (count / maxCount) * 50
+      const size = Math.ceil((count / maxCount) * 50 * 100) / 100
       nodes.push({
         id: name,
+        value: count,
         style: {
           keyshape: {
             size: size
@@ -73,26 +76,63 @@ const convertFormatStringArrayToNetwork = (name: string, data: FormatStringArray
       })
     })
 
-  nodes.forEach((node, index) => {
-    nodes.slice(index).forEach((otherNode) => {
-      const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
-      if (!count) return
-      const lineWidth = (count / maxCount) * 20
-      edges.push({
-        source: node.id,
-        target: otherNode.id,
-        value: count,
-        style: {
-          keyshape: {
-            lineWidth: lineWidth,
-          }
-        },
+  const hasDirection = data.filter((line) => line.length === 2).length === data.length
+  if (hasDirection) {
+    nodes.forEach((node, index) => {
+      nodes.slice(index).forEach((otherNode) => {
+        const totalCount = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
+        if (!totalCount) return
+
+        // source -> target
+        const sourceTargetCount = data.filter((line) => line[0] === node.id && line[1] === otherNode.id).length
+        sourceTargetCount && edges.push({
+          source: node.id,
+          target: otherNode.id,
+          value: sourceTargetCount,
+          style: {
+            keyshape: {
+              lineWidth: Math.ceil((sourceTargetCount / maxCount) * 20 * 100) / 100,
+            }
+          },
+        })
+
+        // target -> source: 当 target === source 时忽略
+        const targetSourceCount = data.filter((line) => line[0] === otherNode.id && line[1] === node.id && line[0] !== line[1]).length
+        targetSourceCount && edges.push({
+          source: otherNode.id,
+          target: node.id,
+          value: targetSourceCount,
+          style: {
+            keyshape: {
+              lineWidth: Math.ceil((targetSourceCount / maxCount) * 20 * 100) / 100,
+            }
+          },
+        })
       })
     })
-  })
+  } else {
+    nodes.forEach((node, index) => {
+      nodes.slice(index).forEach((otherNode) => {
+        const count = data.filter((line) => line.includes(node.id) && line.includes(otherNode.id)).length
+        if (!count) return
+        const lineWidth = Math.ceil((count / maxCount) * 20 * 100) / 100
+        edges.push({
+          source: node.id,
+          target: otherNode.id,
+          value: count,
+          style: {
+            keyshape: {
+              lineWidth: lineWidth,
+            }
+          },
+        })
+      })
+    })
+  }
 
   return {
     name,
+    direction: hasDirection,
     nodes,
     edges,
   }
