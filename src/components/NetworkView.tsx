@@ -102,12 +102,12 @@ const filterNetwork = (network: Network, filters: NetworkFilters) => {
 const NetworkView: React.FC<Props> = () => {
   const { width, height } = useWindowSize()
   const [network, setNetwork] = useState(() => getDemoData('wakatime-leaders'))
-  const [layoutType, setLayoutType] = useState('force')
+  const [layoutType, setLayoutType] = useState('graphin-force')
   const [arrowType, setArrowType] = useState('none')
   const [renderKey, setRenderKey] = useState(0)
   const [networkFilters, setNetworkFilters] = useState<NetworkFilters>({
-    nodeTopCount: 30,
-    edgeTopCount: 3,
+    nodeTopCount: 40,
+    edgeTopCount: 4,
     minEdgeValue: 0,
     nodeSizeScale: 1,
     edgeLineWidthScale: 1,
@@ -356,7 +356,6 @@ const NetworkView: React.FC<Props> = () => {
         layout={layout}
         height={height - 64 - 10}
         width={width - 10}
-        fitView
       />
     </section>
   )
